@@ -8,3 +8,5 @@ RUN winecfg
 RUN apt-get install -y wine
 
 EXPOSE 9000
+
+CMD ["wine", "metatrader.exe"]
