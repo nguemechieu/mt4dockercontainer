@@ -1,8 +1,5 @@
-FROM suchja/wine:latest
-USER root
-RUN mkdir -p /softwares/mt4/MQL4/Experts
-RUN wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4ubuntu.sh 
-RUN chmod +x mt4ubuntu.sh  
-RUN ./mt4ubuntu.sh
-WORKDIR Home directory\.mt4\drive_c\Program Files\MetaTrader 4
-EXPOSE 8080
+FROM ubuntu:latest
+RUN apt-get updates
+RUN apt-get install  apt-utils
+RUN wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4ubuntu.sh ; chmod +x mt4ubuntu.sh ; ./mt4ubuntu.sh
+EXPOSE 9000
