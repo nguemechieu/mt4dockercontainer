@@ -14,6 +14,4 @@ RUN apt-get update && \
 RUN apt-get update 
 
 
-# Set a default working directory
-RUN chmod +x mt4ubuntu.sh ; 
-RUN   ./mt4ubuntu.sh
+RUN wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4ubuntu.sh ; chmod +x mt4ubuntu.sh ; ./mt4ubuntu.sh
