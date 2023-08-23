@@ -11,4 +11,4 @@ RUN apt-get update && \
 
 # Set a default working directory
 RUN chmod +x mt4ubuntu.sh ; 
-RUN .\\mt4ubuntu.sh
+RUN bash mt4ubuntu.sh
