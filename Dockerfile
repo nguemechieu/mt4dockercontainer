@@ -38,14 +38,14 @@ fi
 # Update package and install Wine
 RUN apt update
 RUN apt upgrade
-RUN apt-get  install y --install-recommends winehq-$WINE_VERSION
+RUN apt-get  install -y --install-recommends winehq-$WINE_VERSION
 
 # Download MetaTrader
-wget $URL -O mt4setup.exe
+RUN wget $URL -O mt4setup.exe
 
 # Set environment to Windows 10
-WINEPREFIX=~/.mt4 WINEARCH=win32 winecfg -v=win10
+RUN WINEPREFIX=~/.mt4 WINEARCH=win32 winecfg -v=win10
 # Start MetaTrader installer in 32 bit environment
-WINEPREFIX=~/.mt4 WINEARCH=win32 wine mt4setup.exe
+RUN WINEPREFIX=~/.mt4 WINEARCH=win32 wine mt4setup.exe
 
 
