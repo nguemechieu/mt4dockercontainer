@@ -1,17 +1,19 @@
-# Use a base image
-FROM ubuntu:latest
-WORKDIR ./mt4dockercontainer
-# Update package repositories and install wget
+# Use a base image with wine already installed (you can replace this with a suitable wine image)
+FROM my-wine-image:latest
 
-
-COPY  ./mt4ubuntu.sh ./mt4ubuntu.sh
-
-
+# Update package repositories and install additional tools
 RUN apt-get update && \
     apt-get install -y wget && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update 
+# Copy your script to the container
+COPY mt4ubuntu.sh /app/mt4ubuntu.sh
 
+# Set executable permissions on the script
+RUN chmod +x /app/mt4ubuntu.sh
 
-RUN wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4ubuntu.sh ; chmod +x mt4ubuntu.sh ; ./mt4ubuntu.sh
+# Set a default working directory
+WORKDIR /app
+
+# Command to run when the container starts
+CMD ["/bin/bash"]
