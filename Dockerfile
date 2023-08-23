@@ -1,6 +1,6 @@
 # Use a base image
 FROM ubuntu:latest
-
+WORKDIR ./mt4dockercontainer
 # Update package repositories and install wget
 RUN apt-get update && \
     apt-get install -y wget && \
