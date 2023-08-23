@@ -1,5 +1,5 @@
 # Use a base image with wine already installed (you can replace this with a suitable wine image)
-FROM my-wine-image:latest
+FROM ubuntu:latest
 
 # Update package repositories and install additional tools
 RUN apt-get update && \
