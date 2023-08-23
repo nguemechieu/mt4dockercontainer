@@ -38,7 +38,7 @@ fi
 # Update package and install Wine
 RUN apt update
 RUN apt upgrade
-RUN apt install --install-recommends winehq-$WINE_VERSION
+RUN apt-get  install y --install-recommends winehq-$WINE_VERSION
 
 # Download MetaTrader
 wget $URL -O mt4setup.exe
