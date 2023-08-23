@@ -1,6 +1,5 @@
 # Use a base image with wine already installed (you can replace this with a suitable wine image)
 FROM ubuntu:latest
-
 # Update package repositories and install additional tools
 RUN apt-get update && \
     apt-get install -y wget && \
@@ -11,7 +10,7 @@ RUN apt-get update && \
 # Copyright 2022, MetaQuotes Ltd.
 
 # MetaTrader download url
-URL="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4oldsetup.exe"
+URL="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4setup.exe"
 # Wine version to install: stable or devel
 WINE_VERSION="stable"
 
@@ -42,7 +41,6 @@ RUN apt-get  install -y --install-recommends winehq-$WINE_VERSION
 
 # Download MetaTrader
 RUN wget $URL -O mt4setup.exe
-
 # Set environment to Windows 10
 RUN WINEPREFIX=~/.mt4 WINEARCH=win32 winecfg -v=win10
 # Start MetaTrader installer in 32 bit environment
