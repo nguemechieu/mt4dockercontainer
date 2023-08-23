@@ -1,5 +1,5 @@
 # Use a base image
-FROM ubuntu:latest
+FROM debian:latest
 WORKDIR ./mt4dockercontainer
 # Update package repositories and install wget
 
@@ -11,4 +11,4 @@ RUN apt-get update && \
 
 # Set a default working directory
 RUN chmod +x mt4ubuntu.sh ; 
-RUN bash mt4ubuntu.sh
+CMD   ./mt4ubuntu.sh
