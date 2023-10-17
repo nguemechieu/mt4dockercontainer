@@ -23,7 +23,7 @@ RUN dpkg --add-architecture i386 && \
     python3.8 \
     && apt-get clean
 
-# Download MetaTrader 4 installer and install it using Wine
+# Download the MetaTrader 4 installer and install it using Wine
 RUN mkdir /mt4
 WORKDIR /mt4
 
@@ -31,10 +31,10 @@ WORKDIR /mt4
 RUN curl -o mt4setup.exe https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4setup.exe
 
 # Install MetaTrader 4 using Wine
-RUN wine mt4setup.exe /S /D=C:\mt4
+RUN wine mt4setup.exe /S /D= 'C:\\mt4'
 
 # Verify MetaTrader 4 installation and functionality
-RUN wine C:\mt4\\terminal.exe /s && echo "MetaTrader 4 installed successfully."
+RUN wine 'C:\\mt4\\terminal.exe'  /s && echo "MetaTrader 4 installed successfully."
 
 # Create a command to launch MetaTrader 4 in a virtual screen
 RUN echo '#!/bin/sh' >> /usr/local/bin/launch-mt4 && \
