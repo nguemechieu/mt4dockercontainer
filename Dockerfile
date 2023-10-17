@@ -1,49 +1,53 @@
-# Use a base image with wine already installed (you can replace this with a suitable wine image)
+# Use an official Ubuntu as a parent image
 FROM ubuntu:latest
-# Update package repositories and install additional tools
-RUN apt-get update && \
-    apt-get install -y wget && \
-    rm -rf /var/lib/apt/lists/*
 
-# Copy your script to the container
+# Set environment variables to avoid interactive prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Copyright 2022, MetaQuotes Ltd.
+# Update package list and install necessary dependencies, including curl
+RUN apt-get update -y && \
+    apt-get install -y \
+    software-properties-common \
+    x11vnc \
+    xvfb \
+    curl \
+    && apt-get clean
 
-# MetaTrader download url
-URL="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4setup.exe"
-# Wine version to install: stable or devel
-WINE_VERSION="stable"
+# Add Wine repository and install Wine
+RUN dpkg --add-architecture i386 && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update -y && \
+    apt-get install -y \
+    wine64 \
+    wine32 \
+    python3.8 \
+    && apt-get clean
 
-# Prepare: switch to 32 bit and add Wine key
-RUN dpkg --add-architecture i386
-RUN  mkdir -pm755 /etc/apt/keyrings
-RUN wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+# Download MetaTrader 4 installer and install it using Wine
+RUN mkdir /mt4
+WORKDIR /mt4
 
-# Get Ubuntu version and trim to major only
-OS_VER=$(lsb_release -r |cut -f2 |cut -d "." -f1)
-# Choose repository based on Ubuntu version
-if (( $OS_VER >= 23)); then
-  RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/lunar/winehq-lunar.sources
-elif (( $OS_VER < 23 )) && (( $OS_VER >= 22 )); then
-  RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-elif (( $OS_VER < 22 )) && (( $OS_VER >= 21 )); then
-  RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/impish/winehq-impish.sources
-elif (( $OS_VER < 21 )) && (( $OS_VER >= 20 )); then
-  RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/focal/winehq-focal.sources
-elif (( $OS_VER < 20 )); then
-  RUN wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/bionic/winehq-bionic.sources
-fi
+# Use curl to download the MetaTrader 4 installer
+RUN curl -o mt4setup.exe https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4setup.exe
 
-# Update package and install Wine
-RUN apt update
-RUN apt upgrade
-RUN apt-get  install -y --install-recommends winehq-$WINE_VERSION
+# Install MetaTrader 4 using Wine
+RUN wine mt4setup.exe /S /D=C:\\mt4
 
-# Download MetaTrader
-RUN wget $URL -O mt4setup.exe
-# Set environment to Windows 10
-RUN WINEPREFIX=~/.mt4 WINEARCH=win32 winecfg -v=win10
-# Start MetaTrader installer in 32 bit environment
-RUN WINEPREFIX=~/.mt4 WINEARCH=win32 wine mt4setup.exe
+# Verify MetaTrader 4 installation and functionality
+RUN wine C:\\mt4\\terminal.exe /s && echo "MetaTrader 4 installed successfully."
 
+# Create a command to launch MetaTrader 4 in a virtual screen
+RUN echo '#!/bin/sh' >> /usr/local/bin/launch-mt4 && \
+    echo 'Xvfb :1 -screen 0 1024x768x16 & sleep 5 && DISPLAY=:1 wine "C:\\mt4\\terminal.exe"' >> /usr/local/bin/launch-mt4 && \
+    chmod +x /usr/local/bin/launch-mt4
 
+# Cleanup
+RUN apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /mt4
+
+# Set the working directory to root
+WORKDIR /
+
+# Command to launch MetaTrader 4
+CMD ["launch-mt4"]
