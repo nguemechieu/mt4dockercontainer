@@ -31,14 +31,14 @@ WORKDIR /mt4
 RUN curl -o mt4setup.exe https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4setup.exe
 
 # Install MetaTrader 4 using Wine
-RUN wine mt4setup.exe /S /D=C:\\mt4
+RUN wine mt4setup.exe /S /D=C:\mt4
 
 # Verify MetaTrader 4 installation and functionality
-RUN wine C:\\mt4\\terminal.exe /s && echo "MetaTrader 4 installed successfully."
+RUN wine C:\mt4\\terminal.exe /s && echo "MetaTrader 4 installed successfully."
 
 # Create a command to launch MetaTrader 4 in a virtual screen
 RUN echo '#!/bin/sh' >> /usr/local/bin/launch-mt4 && \
-    echo 'Xvfb :1 -screen 0 1024x768x16 & sleep 5 && DISPLAY=:1 wine "C:\\mt4\\terminal.exe"' >> /usr/local/bin/launch-mt4 && \
+    echo 'Xvfb :1 -screen 0 1024x768x16 & sleep 5 && DISPLAY=:1 wine "C:\mt4\\terminal.exe"' >> /usr/local/bin/launch-mt4 && \
     chmod +x /usr/local/bin/launch-mt4
 
 # Cleanup
